@@ -8,9 +8,9 @@ public class MainRun {
         AmateurAthlete amateurAthlete = new AmateurAthlete();
         ProAthlete proAthlete = new ProAthlete();
 
-        human.run("обычный человек" , 10);
-        amateurAthlete.run("спортсмен-любитель",15);
-        proAthlete.run("спортсмен-профи",25);
+        human.run("обычный человек," , 10,15);
+        human.run("спортсмен-любитель,",15,10);
+        human.run("спортсмен-профи,",25,5);
 
 
     }
