@@ -43,8 +43,23 @@ public class Homework_25 {
     String removeDuplicateChars( String string)
     пример: "abbccccaadb" -> "abcd"
     */
+        String duplicates = "abbccccaadb";
+        System.out.println(removeDuplicateChars(duplicates));
 
 
+
+    }
+    public static String removeDuplicateChars(String string) {
+        char[] chars = string.toCharArray();
+        String result = "";
+
+        for (int i = 0; i < chars.length; i++) {
+            if(result.indexOf(chars[i])== -1) {
+                result += chars[i]; //abcd
+            }
+
+        }
+        return result;
     }
 
 

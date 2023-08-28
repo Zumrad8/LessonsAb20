@@ -4,23 +4,33 @@ import java.util.Arrays;
 
 public class RubberArray {
 
-    int[] array;
+   private int[] array;
+   int cursor;
+   static final int MULTIPLIER = 2;
 
     public RubberArray() { // конструктор
-        this.array = new int[0];
+        this.array = new int[10];
+        cursor = 0;
 
     }
 
     public RubberArray(int[] arr) {
-        this(); // new RubberArray();
-        add(arr);
+        this.array = Arrays.copyOf(arr, arr.length);
+
+        //this(); // this.array = new int[];
+        // add(arr);
 
     }
 
-    public void add(int value) { // добавление 1 элемента
-        extractArray();
+    public void add(int value) {// добавление 1 элемента
+        if (isArrayFull()) {
+            extractArray();
+        }
         array[array.length - 1] = value;
 
+    }
+    private boolean isArrayFull() {
+        return cursor == array.length -1;
     }
 
     public void add(int... ints) { // принимает произвольное количество аргументов типа int
@@ -31,11 +41,25 @@ public class RubberArray {
 
     }
 
-    public void extractArray() { // расширение массива на 1 ячейку
-        array = Arrays.copyOf(array, array.length + 1);
+    private void extractArray() { // расширение массива на 1 ячейку
+        System.out.println("Расширяем внутренний массив! ");
+        array = Arrays.copyOf(array, array.length * MULTIPLIER);
     }
 
     public void printArray() { // вывести в консоль массив
+        System.out.print("[");
+        for (int i = 0; i < cursor; i++) {
+            System.out.print(array[i]);
+            if (i < cursor - 1) {
+                System.out.print("; ");
+            }
+
+        }
+        System.out.print("]");
+        System.out.println();
+
+    }
+    public void printFullArray() { // вывести в консоль массив
         System.out.print("[");
         for (int i = 0; i < array.length; i++) {
             System.out.print(array[i]);
@@ -50,6 +74,9 @@ public class RubberArray {
     }
 
     public int size() { // количество элементов в массиве
+        return cursor;
+    }
+    public int length() {
         return array.length;
     }
 
@@ -61,26 +88,27 @@ public class RubberArray {
         return sum;
     }
 
+    // TODO переписать
     public int min() { // возвращаем мин значение из массива
-        if (array.length == 0) return Integer.MIN_VALUE;
+        if (cursor == 0) return Integer.MIN_VALUE;
 
         int min = array[0];
-        for (int value : array) {
-            if (value < min) {
-                min = value;
+        for (int i = 0; i < cursor; i++) {
+            if (array[i] < min) {
+                min = array[i];
             }
         }
         return min;
 
     }
-
+    // TODO переписать
     public int max() { // возвращаем макс значение из массива
-        if (array.length == 0) return Integer.MAX_VALUE;
+        if (cursor == 0) return Integer.MAX_VALUE;
 
         int max = array[0];
-        for (int value : array) {
-            if (value > max) {
-                max = value;
+        for (int i = 0; i < cursor; i++) {
+            if (array[i] > max) {
+                max = array[i];
             }
         }
         return max;
@@ -99,67 +127,75 @@ public class RubberArray {
     }
 
     public void deleteByIndex(int index) { // удалить элемент по индексу
-        if (array.length >= 1 && index >= 0 && index < array.length) {
+        if (cursor >= 1 && index >= 0 && index < cursor) {
 
-            int[] result = new int[array.length - 1];
+           // int[] result = new int[array.length - 1];
 
-            for (int i = 0; i < result.length; i++) {
-                if (i < index) {
-                    result[i] = array[i];
-
-                } else { // if (i >= index)
-
-                    result[i] = array[i + 1];
-
-                }
-
+            for (int i = 0; i < cursor; i++) {
+                array[i] = array[i + 1];
             }
-            // System.out.println("Result " + Arrays.toString(result));
-            array = result;
+            cursor--;
         }
 
 
     }
 
     public int searchValueByIndex(int index) { // Возвращение значения по индексу
-        if (index < 0 || index > array.length -1) {
-            return -1;
+        if (isIndexIncorrect(index)) {
+            return Integer.MIN_VALUE;
         }
         return array[index];
     }
 
-    public int searchElementByValue(int value) {
-        for (int i = 0; i < array.length; i++) {
+    public int searchElementByValue(int value) { //Поиск элемента по значению
+        for (int i = 0; i < cursor; i++) {
             if (array[i] == value) {
                 return i;
             }
         }
         return -1;
     }
-    public void deleteByValue (int value) { // Удаление элемента по значению
+    public boolean deleteByValue (int value) { // Удаление элемента по значению
+        System.out.println("Start delete by value! ");
+        int indexByValue = searchElementByValue(value);
+        if (indexByValue < 0) return false;
+        deleteByIndex(indexByValue);
 
-        int index = searchElementByValue(value);
-        if (index >= 0){
-            deleteByIndex(index);
+        return  true;
+
+    }
+    public int deleteAllByValue(int value) { // Поиск и удаление ВСЕХ элементов по значению x;
+        int count = 0;
+
+        //Пытаемся найти значение в массиве. Если находим -> удаляем и возвращаем true.
+        // Входим в тело while, если находим, возвращаем false. Выходим из цикла while
+
+        while (deleteByValue(value)) {
+            count++;
         }
+        return count;
 
     }
 
-    public void swapValueByIndex (int index, int newValue) { //Замена значения по индексу (есть индекс и новое значение)
-        if(index >= 0 && index < array.length -1) {
-            array[index] = newValue;
+    public boolean swapValueByIndex (int index, int newValue) { //Замена значения по индексу (есть индекс и новое значение)
+        if(isIndexIncorrect(index)) {
+            return false;
         }
-    }
-
-    public void swapValueToValue (int oldValue, int newValue) {
-
+        array[index]= newValue;
+        return true;
 
     }
+
+    private boolean isIndexIncorrect(int index) {
+        return !(index >= 0 && index < cursor);
+    }
+
 
 
 
 
 }
+
 
 
 /*
