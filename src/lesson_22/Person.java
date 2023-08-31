@@ -1,6 +1,7 @@
 package lesson_22;
 
 public class Person {
+    public boolean getAge;
     private String name;
     private boolean isKind;
     private boolean isHaveSpecialRequirements;
