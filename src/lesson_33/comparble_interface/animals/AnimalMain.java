@@ -56,7 +56,7 @@ public class AnimalMain {
         System.out.println("Sort by last letter of animal' name");
         Arrays.sort(animals, new LastLetterOfName());
         for (Animal animal : animals)
-            System.out.println(animal);
+            System.out.println(animal.getName());
 
     }
 
